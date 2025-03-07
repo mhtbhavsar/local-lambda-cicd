@@ -5,7 +5,7 @@ async function getLambdaFunction() {
         return (await import("../demoLambda2/index.mjs")).handler; // For ES Modules
 }
 
-describe("AWS Lambda Function - demoLambda1", () => {
+describe("AWS Lambda Function - demoLambda2", () => {
     it("should return a 200 response with a message", async () => {
         const handler = await getLambdaFunction();
         const event = { key1: "value1" }; // Simulated event
