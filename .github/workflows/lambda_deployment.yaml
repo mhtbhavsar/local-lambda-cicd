@@ -17,8 +17,7 @@ jobs:
       - name: AWS CLI v2
         uses: imehedi/actions-awscli-v2@latest
         with:
-          args: "lambda update-function-code \
-            --function-name arn:aws:lambda:us-east-1:742282958938:function:demoFunction \
+          args: "lambda update-function-code local-lambda\
             --function-name arn:aws:lambda:us-east-1:742282958938:function:sdemoFunction \
             --zip-file fileb://code.zip"
         env:
