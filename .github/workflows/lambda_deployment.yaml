@@ -1,4 +1,4 @@
-name: Deploy Lambda Function
+name: Deploy Lambdas
 
 on:
   push:
@@ -7,25 +7,25 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Install zip tool
-        uses: montudor/action-zip@v1
-      - name: Create Zip file for Lambda function
-        run: zip -r code.zip demoLambda1
-      - name: Create Zip file for Lambda function
-        run: zip -r code2.zip demoLambda2
-      - name: AWS CLI v2
-        uses: imehedi/actions-awscli-v2@latest
+      - uses: actions/checkout@v3
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          args: "lambda update-function-code \
-            --function-name arn:aws:lambda:us-east-1:742282958938:function:demoLambda1 \
-            --zip-file fileb://code.zip"
-          args: "lambda update-function-code \
-            --function-name arn:aws:lambda:us-east-1:742282958938:function:demoLambda2 \
-            --zip-file fileb://code2.zip"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "us-east-1"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Replace with your desired region
+      
+      - name: Install dependencies
+        run: npm install 
+
+      - name: Build Lambda packages
+        run: |
+          zip -r demoFunction1.zip demoFunction1
+          zip -r demoFunction2.zip demoFunction2
+
+      - name: Deploy Function 1
+        run: aws lambda update-function-configuration --function-name "demoFunction1" --zip-file fileb://demoFunction1.zip 
+      
+      - name: Deploy Function 2
+        run: aws lambda update-function-configuration --function-name "demoFunction2" --zip-file fileb://demoFunction2.zip 
