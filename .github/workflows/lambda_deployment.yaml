@@ -9,8 +9,29 @@ on:
       - '.github/workflows/lambda_deployment.yaml'  # Run if workflow file changes
 
 jobs:
-  deploy:
+  test:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+  deploy:
+    name: Deploy Lambda Functions
+    runs-on: ubuntu-latest
+    needs: test  # ✅ Ensures deployment runs only if tests pass
     strategy:
       matrix:
         function: [demoLambda1, demoLambda2]  # Your AWS Lambda function names

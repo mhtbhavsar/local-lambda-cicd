@@ -83,3 +83,30 @@ jobs:
 
 ```
           
+## Testing lambda function
+#### Option1 : Test using local test file(test.js)
+ - note : CommonJS (module.exports) → Works without extra config, best for most Node.js projects. Changes may requird in generated lambda function.
+ - I am using : ES Modules (import/export) → Requires "type": "module", but future-proof
+ ```
+  import { handler } from "./demoLambda1/index.js";
+
+  const event = { key1: "value1", key2: "value2" };
+  handler(event).then(console.log).catch(console.error);
+ ```
+
+#### Option 2 : Using AWS Toolkit for VS Code (Best for Quick Testing)
+The AWS Toolkit VS Code extension lets you invoke Lambda functions directly from the editor.
+
+  - 1️⃣ Install AWS Toolkit Extension
+    -   Open VS Code
+    -   Go to Extensions (Ctrl+Shift+X)
+    -   Search for "AWS Toolkit"
+    -   Click Install
+  - 2️⃣ Configure AWS Credentials
+    -  Sign in to AWS using the AWS Toolkit
+    -   Select Lambda Services from the AWS Explorer panel
+  - 3️⃣ Invoke Lambda Function Locally
+    -   Right-click on your function in the AWS Explorer
+    -   Click "Invoke Locally"
+    -   Choose a test event or create a new one
+    -   View logs and results in the Output panel
