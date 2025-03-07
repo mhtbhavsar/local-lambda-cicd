@@ -14,7 +14,14 @@
  - create repo
  - add secrets for aws using settings->Secrets and variables->Actions->new repository secret
  - I removed my secrets.
-
+### VSCODE
+ - You can maintain functions from vscode
+ - configure aws cli
+ - install SAM cli
+ - you wil be able to see aws to the left most panel
+ - open aws and check the explorer for lambda function.
+ - aws services can be manage from vscode now
+   
 #### Make sure other unneccesary files should not get pushed along with function
 ##### To make this project arn specific if dealing with different aws accounts and permission Follow next step and make some code changes
 
