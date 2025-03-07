@@ -1,31 +1,46 @@
-name: Deploy Lambdas
+name: Deploy AWS Lambda Functions (Monorepo)
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'functions/**'
+      - '.github/workflows/deploy.yml'  # Run if workflow file changes
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        function: [demoLambda1, demoLambda2]  # Your AWS Lambda function names
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies (Monorepo)
+        run: npm install  # Ensures shared dependencies are installed
+
+      - name: Zip Lambda function
+        run: |
+          cd functions/${{ matrix.function }}
+          zip -r ../../${{ matrix.function }}.zip . -x '*.git*' 'node_modules/*'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Replace with your desired region
-      
-      - name: Install dependencies
-        run: npm install 
+          aws-region: us-east-1  # Change if needed
 
-      - name: Build Lambda packages
+      - name: Deploy to AWS Lambda
         run: |
-          zip -r demoFunction1.zip demoFunction1
-          zip -r demoFunction2.zip demoFunction2
-
-      - name: Deploy Function 1
-        run: aws lambda update-function-configuration --function-name "demoFunction1" --zip-file fileb://demoFunction1.zip 
-      
-      - name: Deploy Function 2
-        run: aws lambda update-function-configuration --function-name "demoFunction2" --zip-file fileb://demoFunction2.zip 
+          aws lambda update-function-code \
+            --function-name ${{ matrix.function }} \
+            --zip-file fileb://${{ matrix.function }}.zip
