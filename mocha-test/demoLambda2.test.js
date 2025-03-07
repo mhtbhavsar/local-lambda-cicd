@@ -2,7 +2,7 @@ import  { expect } from "chai";
 
 // Dynamically import the function (works for both CommonJS & ES Modules)
 async function getLambdaFunction() {
-        return (await import("../demoLambda1/index.mjs")).handler; // For ES Modules
+        return (await import("../demoLambda2/index.mjs")).handler; // For ES Modules
 }
 
 describe("AWS Lambda Function - demoLambda1", () => {
